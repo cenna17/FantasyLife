@@ -1,0 +1,141 @@
+#######################################################################################################################\
+#######################################################################################################################\
+
+Description: This lab focuses on understanding various standards that can be used in compiling C files and linking
+files written in multiple languages together for a functional program.  
+
+Compilation Options Used: 
+
+	- (Part 1) Flags used to detect bugs in code simple 'gcc file.c' cannot detect <-- {-Wall ... -march=haswell}
+	- (Part 2) Optimize code using -O3 for faster execution of funcitons. <-- -O3 option
+	 
+
+Languages Used: 
+	Assembly (for array_sum function)
+	C (for array_sum_test function)
+
+	The C file calls the array_sum function from the Assembly file.  The goal of the exercise is for you to
+	know how to turn prog.lang file into object (.o) files -> link them together -> execute as a big program.
+
+
+#######################################################################################################################\
+#######################################################################################################################\
+
+########################### QUESTION 1 (Part 1)
+Command 1: as array_sum.S -o array_sum.o	#Assemble .S using 'as' and mark assembled result as .o file using '-o'
+
+Command 2: gcc -Wall -Wpedantic -std=c17 -march=haswell -c array_sum_speed.c -o array_sum_speed.o 
+		# compile .c file using '-c'
+		# NOTE: -c means the compiler ONLY compiles and DOES NOT LINK FILES 
+		# 2
+		# INSDIE A C-FILE
+		# 	#include ...
+		# 	#include ... 	
+		# 	int func (int a, int b, int c){ 
+		# 	.
+		# 	.	calls a array_sum() written 
+		# 	.	in assembly (.S) file <- The S file AND this C-file MUST be converted into
+		# 					 object (.o) file AND LINKED for successfull 
+		# 					 compilation using gcc without -c.
+		#					 
+		#					 Using gcc array_sum_speed.c will result in error
+		#					 when the compiler tries to find the array_sum assembly 
+		#					 function.
+		#
+		#					 Therefore, we use gcc -c instead
+		#
+		#
+		# 	.
+		# 	}
+		# NOTE: {-Wall... haswell} in gcc {-Wall ... haswell} -c are options used to 
+		# mark stricter compilation standards 
+		# and return problems that using gcc file.c may not completely detect
+		#
+		# FINALLY: gcc -c marks compile into machine code ONLY
+		# 		-o array_sum_speed.o prepares an object file
+		# 		to be linked with array_sum.o file from command #1
+		# 		
+		# 
+
+Command 3: gcc array_sum.o array_sum_speed.o # Links both machine code object files (.o) together
+		# Now array_sum_speed in C file can call array_sum funciton that was based in Assembly
+Command 4: ./a.out 1000000
+
+############################ TIME TAKEN TO GET SUM FOR FUNCTION WRITTEN IN ASSEMBLY
+calculated 4502733 in 0.680819 ms
+calculated 4502733 in 0.600246 ms
+calculated 4502733 in 0.548997 ms
+calculated 4502733 in 2.17738 ms
+calculated 4502733 in 0.54678 ms
+calculated 4502733 in 0.808044 ms
+calculated 4502733 in 0.511062 ms
+calculated 4502733 in 1.9656 ms
+calculated 4502733 in 1.28196 ms
+calculated 4502733 in 0.512578 ms
+
+############################ QUESTION 2 (Part 2)
+Command used to compile array_sum.c:
+	gcc -Wall -Wpedantic -std=c17 -march=haswell -c array_sum.c -o array_sum.o
+Compared to previous implementation in Part 1 (see results above), the time taken in Part 2 is between ~3-7 times more (see below)
+	
+
+############################ TIME TAKEN TO GET SUM FOR FUNCTION WRITTEN IN C 
+
+calculated 4502733 in 4.72652 ms
+calculated 4502733 in 3.43234 ms
+calculated 4502733 in 3.29957 ms
+calculated 4502733 in 3.34528 ms
+calculated 4502733 in 3.56249 ms
+calculated 4502733 in 3.35061 ms
+calculated 4502733 in 3.82146 ms
+calculated 4502733 in 3.5744 ms
+calculated 4502733 in 4.03541 ms
+calculated 4502733 in 3.88233 ms
+
+############################ QUESTION 3 (Part 2 - Using -O3 option)
+Despite the array_sum function remain written in C.  Adding the -O3 option significantly 
+optimized results (see below) and far surpassed the results of the array_sum funciton written in Assembly
+in part 1.  
+
+Adding -O3 kept the time below 0.5ms for most cases but one, meanwhile in part 1 (without -O3)
+the time taken for calculations consistenly took more than 0.5ms.
+
+It should be noted that the -O <-- (this is a capital 'O') is an gcc option that turns on 
+optimization flags.
+############################ TIME TAKEN TO GET SUM FOR FUNCTION WRITTEN IN C AND USING -O3 OPTION 
+calculated 4502733 in 0.554423 ms
+calculated 4502733 in 0.337929 ms
+calculated 4502733 in 0.163092 ms
+calculated 4502733 in 0.113272 ms
+calculated 4502733 in 0.102365 ms
+calculated 4502733 in 0.103066 ms
+calculated 4502733 in 0.105951 ms
+calculated 4502733 in 0.104883 ms
+calculated 4502733 in 0.119903 ms
+calculated 4502733 in 0.104291 ms
+
+
+############################ RESULTS USING MULTIPLY_ADD.C 
+
+10 + 20 * 30 = 610
+10 + 8388608 * 3 = 25165834
+6 + -20 * 30 = -594
+10 + 7 * -2 = -4
+-731 + 852 * -213 = -182207
+
+############################ RESULTS USING MULTIPLY_ADD.S 
+10 + 20 * 30 = 610
+10 + 8388608 * 3 = 25165834
+6 + -20 * 30 = -594
+10 + 7 * -2 = -4
+-731 + 852 * -213 = -182207
+calculated 4502733 in 0.824328 ms
+calculated 4502733 in 0.613466 ms
+calculated 4502733 in 0.799487 ms
+calculated 4502733 in 0.495357 ms
+calculated 4502733 in 0.467505 ms
+calculated 4502733 in 0.489544 ms
+calculated 4502733 in 0.4868 ms
+calculated 4502733 in 0.495306 ms
+calculated 4502733 in 0.473085 ms
+calculated 4502733 in 0.470674 ms

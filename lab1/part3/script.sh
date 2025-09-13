@@ -1,7 +1,4 @@
-as array_sum.S -o array_sum.o
-
-gcc -Wall -Wpedantic -std=c17 -march=haswell -c array_sum_speed.c -o array_sum_speed.o
-gcc array_sum.o array_sum_speed.o 
+as multiply_add.S -o multiply_add.o
+gcc -c multiply_add_test.c -o multiply_add_test.o
+gcc multiply_add_test.o multiply_add.o
 ./a.out
-
-
