@@ -1,0 +1,15 @@
+########################################QUESTION 1
+The function gives a number that is larger than another number.
+########################################QUESTION 2
+The values of A B C were stored in NON-PRESERVE registers 
+before.  When calling f_function, should that funciton decide to use 
+any one of the registers that were used to store A B C, then the values
+for ABC will be overwritten by whatever the f_function gives it.
+
+However, call preserved registers guarantees that no matter how register 
+values are changed from other functions using them, it always resets
+the value to what it is before the call was made.
+
+In other words, an outside function I call may use the registers even if I do 
+not pass them as parameters or modify them in my code.
+
