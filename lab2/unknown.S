@@ -2,16 +2,16 @@
     .global _start
     .text
 
-do_something:
+do_something:	#Jenny W 301421441
     push %rbx
     mov $1, %rcx
     mov $0, %rbx
     
 loop_top:
     add %rcx, %rbx
-    add $2, %rcx    
+    #add $1, %rcx    
     cmp %rdi, %rbx
-    jl loop_top
+    jle loop_top
         
     mov %rbx, %rax
     pop %rbx
