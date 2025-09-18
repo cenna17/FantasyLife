@@ -5,7 +5,7 @@
     .text
 
 calculate: #f(x,y) => rdi = 1st param AND rsi = 2nd param
-mov $1, %rbx	#set X to be preserved
+mov $rdi, %rbx	#set X to be preserved
 push %rbx
 ###################################SETTING A
 add $3, %rbx # x+3
@@ -15,7 +15,7 @@ mov %rbx, %rdx #remember A for later
 ###################################SETTING B
 #RECALL A in RDX
 # b = f(x,a) => want original x for 1st arg => x->pop->rdi && a->rsi
-pop %rbx # get original X
+pop %rbx # get origiinal X
 mov %rbx, %rdi #get original X as 1st arg 
 mov %rdx, %rsi #get A as 2nd arg 
 
@@ -43,4 +43,4 @@ mov %rax, %r9 # store return (D) to R9
 add %rdx, %rax 
 add %rcx, %rax
 add %r8, %rax 
-ret
+
