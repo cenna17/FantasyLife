@@ -5,7 +5,7 @@
     .text
 
 calculate: #f(x,y) => rdi = 1st param AND rsi = 2nd param
-mov $rdi, %rbx	#set X to be preserved
+mov %rdi, %rbx	#set X to be preserved
 push %rbx
 ###################################SETTING A
 add $3, %rbx # x+3
@@ -36,11 +36,10 @@ mov %rax, %r8 #store return (C) to R8
 mov %rbx, %rdi #get X as 1st arg
 mov %r8, %rsi #get C as 2nd arg
 call f
-mov %rax, %r9 # store return (D) to R9
 
 ################################# RETURN SUM
 ### By prev, RAX currently equal D
 add %rdx, %rax 
 add %rcx, %rax
 add %r8, %rax 
-
+ret
