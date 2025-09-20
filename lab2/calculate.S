@@ -50,10 +50,9 @@ add %r12, %rax
 add %r13, %rax
 add %r14, %rax
 ################################# RESTORE PRESERVE REGISTERS VALUES
-pop %rbx
-pop %r12
-pop %r13
 pop %r14
+pop %r13
+pop %r12
 ################################# RETURN SUM
 ret
 ##############################################################
