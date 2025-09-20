@@ -10,20 +10,20 @@ calculate: #f(x,y) => rdi = 1st param AND rsi = 2nd param
 ########### respectively.  Since they are preserve registers, we must restore
 ########### their values after use in this function.  
 ########### Therefore, we must push them into the stack first.
-push %rbx #preserve x
 mov %rdi, %rbx	#set X to be preserved
+push %rbx #preserve x
 push %r12 #preserve A
 push %r13 #preserve B
 push %r14 #preserve C
 ###################################SETTING A
-add $3, %rbx # x+3
-mov %rbx, %r12#remember A for later
+mov %rbx, %rax
+add $3, %rax # x+3
+mov %rax, %r12#remember A for later
 
 ###################################SETTING B
 #RECALL A in RDX
 # b = f(x,a) => want original x for 1st arg => x->pop->rdi && a->rsi
 mov %r12, %rsi #set A as 2nd arg
-pop %rbx # get origiinal X
 mov %rbx, %rdi #get original X as 1st arg 
 
 #rdi and rsi are set, ready to call f(x,a)
@@ -53,6 +53,7 @@ add %r14, %rax
 pop %r14
 pop %r13
 pop %r12
+pop %rbx
 ################################# RETURN SUM
 ret
 ##############################################################
