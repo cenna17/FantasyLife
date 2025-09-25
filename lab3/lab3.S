@@ -18,24 +18,18 @@ mov %rdi, %rax
 ret
 power2:
    mov %rdi, %r12 #rdi -> arg1 (holds n)
-   mov $0, %rsi #rsi -> arg2 (counter)
    mov $1, %rdx #rdx -> arg3 (sum)
    jmp loop
 
 loop:
-
-cmp %rsi, %r12
-jl loop
-jg loop_end
-
-mov %rdx, %rdi
-push %rsi
-push %rdx
-call print_uint64
-pop %rdx
-pop %rsi
-add $1, %rsi # counter+= 1
-add %rdx, %rdx
+cmp $0, %r12 # if n < 0
+jl loop_end  # TRUE -> END 
+mov %rdx, %rdi #ELSE -> RESUME FROM HERE
+push %rdx # save sum in case print fcn changes it
+call print_uint64 #print sum
+pop %rdx #load sum
+add %rdx, %rdx # double sum
+sub $1, %r12 # countdown n
 jmp loop
 
 loop_end:
