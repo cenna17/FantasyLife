@@ -28,12 +28,12 @@ char* to_base(uint64_t v, short base, char ending) {
         pos--;
     } while ( v != 0 );
     return pos + 1;
-}
+
 
 
 int main(int argc, char *argv[]) {
     uint64_t f = factorial(6);
-    printf("f = %llu\n", f);
+    printf("f = %ld\n", f);
     
     printf("0b%s\n", to_base(254, 2, '\0'));
     printf("%s\n", to_base(254, 10, '\0'));
