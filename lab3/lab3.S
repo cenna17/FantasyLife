@@ -7,6 +7,59 @@
 
 	.text
 
+hailstone_length: # Given integer n: IF EVEN => n = n/2; IF_ODD, n = 3n+1.
+mov $0, %rsi #set length = 0
+
+test $1, %rdi # BITWISE AND WITH N - 0 if even; 1 if odd
+
+jnz toEven # zero-flag output 1 if odd => jnz (jump if not zero) => DO IF ODD
+jz reduce
+
+reduce: #rdi - n    rsi = length
+cmp $0, %rdi #BASE CASE
+je return_length
+
+shr $1, %rdi #Divide n by 2
+add $1, %rsi
+
+test $1, %rdi # BITWISE AND WITH N - 0 if even; 1 if odd
+
+jnz toEven # zero-flag output 1 if odd => jnz (jump if not zero) => DO IF ODD
+jz reduce
+
+toEven: #receives odd # n in rdi
+cmp $1, %rdi
+je return_length
+
+imul $3, %rdi
+add $1, %rdi
+
+jmp reduce
+
+return_length: 
+mov %rsi, %rax
+ret 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 abs_value: 
 cmp $0, %rdi 
 jl calculate_twos_comp
@@ -33,7 +86,6 @@ sub $1, %r12 # countdown n
 jmp loop
 
 loop_end:
+pop %r12
 ret 
 
-hailstone_length:
-ret
