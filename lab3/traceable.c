@@ -28,7 +28,7 @@ char* to_base(uint64_t v, short base, char ending) {
         pos--;
     } while ( v != 0 );
     return pos + 1;
-
+}
 
 
 int main(int argc, char *argv[]) {
