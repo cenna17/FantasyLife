@@ -7,30 +7,6 @@
 
 	.text
 
-power2:
-push %r12
-mov %rdi, %r12 #rdi -> arg1 (holds n)
-mov $1, %rdx #rdx -> arg3 (sum)
-jmp loop
-
-loop:
-cmp $0, %r12 # if n < 0
-jl loop_end  # TRUE -> END 
-
-#ELSE
-mov %rdx, %rdi #move sum as 1st arg for print call
-push %rdx # save sum 
-call print_uint64 #print sum
-pop %rdx #load sum
-
-add %rdx, %rdx # double sum
-sub $1, %r12 # countdown n
-jmp loop
-
-loop_end:
-pop %r12
-ret 
-
 hailstone_length: # Given integer n: IF EVEN => n = n/2; IF_ODD, n = 3n+1.
 mov $0, %rsi #set length = 0
 
@@ -66,6 +42,26 @@ return_length:
 mov %rsi, %rax
 ret 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 abs_value: 
 cmp $0, %rdi 
 jl calculate_twos_comp
@@ -75,3 +71,23 @@ calculate_twos_comp:
 neg %rdi
 mov %rdi, %rax
 ret
+power2:
+   mov %rdi, %r12 #rdi -> arg1 (holds n)
+   mov $1, %rdx #rdx -> arg3 (sum)
+   jmp loop
+
+loop:
+cmp $0, %r12 # if n < 0
+jl loop_end  # TRUE -> END 
+mov %rdx, %rdi #ELSE -> RESUME FROM HERE
+push %rdx # save sum in case print fcn changes it
+call print_uint64 #print sum
+pop %rdx #load sum
+add %rdx, %rdx # double sum
+sub $1, %r12 # countdown n
+jmp loop
+
+loop_end:
+pop %r12
+ret 
+
