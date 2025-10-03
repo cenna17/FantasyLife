@@ -77,6 +77,10 @@ jmp loop
 
 loop: 
 ####### check n % factor
+
+cmp %rdi, %r12
+je isPrimeTRUE
+
 mov $0, %rdx # %rdx store remainder
 mov %r12, %rax # %rax stores quotient; as in Q*factor + R = num
 div %rdi
@@ -85,8 +89,6 @@ cmp $0, %rdx
 je isPrimeFALSE
 
 add $1, %rdi
-cmp %rdi, %r12
-je isPrimeTRUE
 
 jmp loop 
 

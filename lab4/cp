@@ -1,28 +1,99 @@
-#include <stdio.h>
-#include <stdint.h>
-#include "lab4.h"
+ .section .note.GNU-stack,""
+ 	.extern lab4
+	.global is_prime
+	.global largest_power_unsigned
+	.global overflowing_subtract
+	.global dumb
 
-int main() {
-    int64_t two62 = 1L<<62;  // == 2^62
-    printf("is_prime(2) == 1 == %lu\n", is_prime(2));
-    printf("is_prime(6) == 0 == %lu\n", is_prime(6));
-    printf("is_prime(7) == 1 == %lu\n", is_prime(7));
-    printf("is_prime(3083) == 1 == %lu\n", is_prime(3083));
-    printf("is_prime(1472741) == 0 == %lu\n", is_prime(1472741));
-    
-    printf("largest_power_unsigned(3) == 12157665459056928801 == %lu\n", largest_power_unsigned(3));
-    printf("largest_power_unsigned(7) == 3909821048582988049 == %lu\n", largest_power_unsigned(7));
-    
-    printf("overflowing_subtract(10, 3) == 7 == %li\n", overflowing_subtract(10, 3));
-    printf("overflowing_subtract(two62, two62-3) == 3 == %li\n", overflowing_subtract(two62, two62-3));
-    printf("overflowing_subtract(-two62, two62) == -9223372036854775808 == %li\n", overflowing_subtract(-two62, two62));
-    printf("overflowing_subtract(two62, -two62) == 0 == %li\n", overflowing_subtract(two62, -two62));
-    // The next case is a signed overflow but *not* an unsigned overflow...
-    printf("overflowing_subtract(-two62, two62+1) == 0 == %li\n", overflowing_subtract(-two62, two62+1));
-    
-    printf("dumb(0, 5) == 6 == %li\n", dumb(0, 5));
-    printf("dumb(7, 0) == 7 == %li\n", dumb(7, 0));
-    printf("dumb(3, 5) == 27 == %li\n", dumb(3, 5));
-    printf("dumb(17, 63) == 1288 == %li\n", dumb(17, 63));
+	.text
+dumb: # %rdi = a; %rsi = b
+mov $0, %rax
+push %rdi #save a
+push %rsi #save b
 
-}
+jmp recursive_dumb
+
+recursive_dumb: 
+pop %rsi
+pop %rdi
+
+cmp $0, %rdi #base: ?a == 0
+je return_B_PLUS_ONE
+cmp $0, %rsi #base: ?b == 0
+je return_A
+
+# add a+a+b to sum
+add %rdi, %rax
+add %rdi, %rax
+add %rsi, %rax
+sub $1, %rdi
+sub $1, %rsi
+push %rdi
+push %rsi
+
+jmp recursive_dumb
+
+return_B_PLUS_ONE:
+add $1, %rsi
+add %rsi, %rax
+ret 
+
+return_A:
+add %rdi, %rax
+ret 
+
+overflowing_subtract:# %rdi = a; %rsi = b => return a-b OR zero on overflow
+sub %rsi, %rdi
+jo returnZERO
+mov %rdi, %rax
+ret
+
+returnZERO: 
+mov $0, %rax
+ret
+
+largest_power_unsigned: #what is P st P = n^k does not cause overflow
+push %r12
+mov %rdi, %r12 #save n
+jmp update_product
+
+update_product: 
+mov %rdi, %rax
+mul %r12
+
+jo return_Upower
+mov %rax, %rdi
+jmp update_product
+
+return_Upower: 
+mov %rdi, %rax
+pop %r12
+ret
+
+is_prime: // n in rdi << check if n is prime or not
+mov %rdi, %r12 #preserve n
+mov $2, %rdi # factor
+jmp loop
+
+loop: 
+####### check n % factor
+mov $0, %rdx # %rdx store remainder
+mov %r12, %rax # %rax stores quotient; as in Q*factor + R = num
+div %rdi
+######
+cmp $0, %rdx
+je isPrimeFALSE
+
+add $1, %rdi
+cmp %rdi, %r12
+je isPrimeTRUE
+
+jmp loop 
+
+isPrimeFALSE: 
+mov $0, %rax
+ret
+
+isPrimeTRUE: 
+mov $1, %rax
+ret 
