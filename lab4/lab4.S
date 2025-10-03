@@ -6,8 +6,42 @@
 	.global dumb
 
 	.text
-dumb:
-ret
+dumb: # %rdi = a; %rsi = b
+mov $0, %rax
+push %rdi #save a
+push %rsi #save b
+
+jmp recursive_dumb
+
+recursive_dumb: 
+pop %rsi
+pop %rdi
+
+cmp $0, %rdi #base: ?a == 0
+je return_B_PLUS_ONE
+cmp $0, %rsi #base: ?b == 0
+je return_A
+
+# add a+a+b to sum
+add %rdi, %rax
+add %rdi, %rax
+add %rsi, %rax
+sub $1, %rdi
+sub $1, %rsi
+push %rdi
+push %rsi
+
+jmp recursive_dumb
+
+return_B_PLUS_ONE:
+add $1, %rsi
+add %rsi, %rax
+ret 
+
+return_A:
+add %rdi, %rax
+ret 
+
 overflowing_subtract:# %rdi = a; %rsi = b => return a-b OR zero on overflow
 sub %rsi, %rdi
 jo returnZERO
