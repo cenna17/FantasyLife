@@ -6,6 +6,17 @@
 	.global dumb
 
 	.text
+dumb:
+ret
+overflowing_subtract:# %rdi = a; %rsi = b => return a-b OR zero on overflow
+sub %rsi, %rdi
+jo returnZERO
+mov %rdi, %rax
+ret
+
+returnZERO: 
+mov $0, %rax
+ret
 largest_power_unsigned: #what is P st P = n^k does not cause overflow
 push %r12
 mov %rdi, %r12 #save n
@@ -55,8 +66,3 @@ ret
 isPrimeTRUE: 
 mov $1, %rax
 ret 
-overflowing_subtract:
-ret 
-dumb: 
-ret
-
