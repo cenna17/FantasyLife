@@ -51,6 +51,7 @@ ret
 returnZERO: 
 mov $0, %rax
 ret
+
 largest_power_unsigned: #what is P st P = n^k does not cause overflow
 push %r12
 mov %rdi, %r12 #save n
@@ -73,8 +74,8 @@ is_prime: // n in rdi << check if n is prime or not
 mov %rdi, %r12 #preserve n
 mov $2, %rdi # factor
 jmp loop
-loop: 
 
+loop: 
 ####### check n % factor
 mov $0, %rdx # %rdx store remainder
 mov %r12, %rax # %rax stores quotient; as in Q*factor + R = num
@@ -87,11 +88,7 @@ add $1, %rdi
 cmp %rdi, %r12
 je isPrimeTRUE
 
-jmp loop
-
-
-
-ret 
+jmp loop 
 
 isPrimeFALSE: 
 mov $0, %rax
