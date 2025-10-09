@@ -48,6 +48,7 @@ int main() {
     CODE_TEST(polynomial2(3,2,7,-1,2));
     CODE_TEST(polynomial3(3,2,7,-1,2));
 
+
     CODE_TEST(is_odd1(7) + is_odd1(8));
     CODE_TEST(is_odd2(7) + is_odd2(8));
     CODE_TEST(is_odd3(7) + is_odd3(8));

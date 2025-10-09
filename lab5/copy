@@ -124,17 +124,17 @@ mov %rsi, %rdi
 mov %rax, %rsi
 push %rdi
 push %rsi
-jmp fib_RECURSIVE
+
 RETURN_ZERO:
-#pop %rbx
+pop %rbx
 ret 
 RETURN_ONE:
-#pop %rbx
+pop %rbx
 mov $1, %rax
 ret 
 
 RETURN_SUM:
-#pop %rbx
+pop %rbx
 ret 
 
 
