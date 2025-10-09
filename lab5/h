@@ -1,0 +1,35 @@
+
+.global polynomial1
+.global polynomial2
+.global polynomial3
+
+.global is_odd1
+.global is_odd2
+.global is_odd3
+
+.global mul1
+.global mul2
+.global mul3
+
+
+polynomial1: ret
+
+polynomial2: ret
+
+polynomial3: ret
+
+
+is_odd1: ret
+
+is_odd2: ret
+
+is_odd3: ret
+
+
+mul1: ret
+
+mul2: ret
+
+mul3: ret
+
+
