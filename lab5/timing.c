@@ -35,6 +35,7 @@ int main() {
     CODE_TEST(warmup(3));
     CODE_TEST(warmup(4));
     CODE_TEST(warmup(5));
+
     /*
     Count that last run time as the overhead needed to just call the functions
     that many times and do the accounting. Subtract that off subsequent runs, to
