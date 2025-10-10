@@ -24,6 +24,16 @@ void printReg(uint64_t one, uint64_t two){
 	return; 
 }
 int main() {
+	printf("polynomial1(3,2,7,-1,2) is %ld \n", polynomial1(3,2,7,-1,2)); 
+	printf("polynomial2(3,2,7,-1,2) is %ld \n", polynomial2(3,2,7,-1,2)); 
+	printf("polynomial3(3,2,7,-1,2) is %ld \n", polynomial3(3,2,7,-1,2)); 
+
+	printf("mul1(123) %ld \n", mul1(123));
+	printf("mul2(123) %ld \n", mul2(123));
+	printf("mul3(123) %ld \n", mul3(123));
+
+
+
     double elapsed, overhead = 0;
     struct timespec start, end;
 
@@ -33,15 +43,14 @@ int main() {
            fibonacci(7), fibonacci(8), fibonacci(9));
     printf("fibonacci(35) == 9227465 == %ld\n", fibonacci(35));
 	
-    //printf("%ld", fibonacci(9)); 
     // Do some meaningless work to wake up the processor (we hope)...
-
+/*
 	CODE_TEST(warmup(1));
     CODE_TEST(warmup(2));
     CODE_TEST(warmup(3));
     CODE_TEST(warmup(4));
     CODE_TEST(warmup(5));
-
+*/
     /*
     Count that last run time as the overhead needed to just call the functions
     that many times and do the accounting. Subtract that off subsequent runs, to
@@ -49,7 +58,7 @@ int main() {
     */
     // update: no, things get weird if we do that
     //overhead = elapsed;
-
+/*
     CODE_TEST(polynomial1(3,2,7,-1,2));
     CODE_TEST(polynomial2(3,2,7,-1,2));
     CODE_TEST(polynomial3(3,2,7,-1,2));
@@ -62,6 +71,6 @@ int main() {
     CODE_TEST(mul1(123));
     CODE_TEST(mul2(123));
     CODE_TEST(mul3(123));
-
+*/
     return 0;
 }
