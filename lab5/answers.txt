@@ -1,0 +1,51 @@
+
+Lesson 1: Doing less work should be faster. Is it? ❓
+Yes.  
+Polynomial 2 is nearly twice faster than Polynomial 1.
+#2 had fewer instructions than #1
+
+
+Lesson 2: How much faster is it? ❓
+It's slower.  is_odd1 took ~5000 ms and is_odd2 took ~1000 ms.  Using shifting, it is about 4-5X faster.
+
+Lesson 3: Is it in this (very simple) case? ❓
+Shifting is only slightly faster (by ~ less than 100ms)
+
+Q&A:
+
+What was your test setup (i.e. what CPU model/generation did you test with? Desktop or laptop or other?)
+
+I use a laptop (MacBook Pro 2018 - I know, so old...) with an Intel CPU i7 Quad-Core (2.8Ghz).  However, I am working in Linux using VM software with the settings: 
+ 10Gb 	- Memory
+ 4	- Processor
+
+What were your results: how much faster (likely expressed as a fraction/percent) is each #2 implementation? (There is no exact answer here: results will vary by run, but give your best estimate of the "truth".)
+
+COMPARED TO #1:
+poly1 ~1000ms
+poly2 ~500ms (twice faster)
+
+isOdd1 ~5000ms
+isOdd2 ~1100ms (five times faster)
+
+mul1	~400ms
+mul2	~370ms (faster but only slightly)
+
+
+In each case, the C implementation (#3) was described with the "slow" algorithm. How did they compare to the "fast" algorithm after the optimizer processed them?
+
+COMPARED TO #2:
+poly2 ~500ms
+poly3 ~400ms (actually this is faster ~25%)
+
+isOdd2 ~1100ms
+isOdd  ~700ms (this is faster too ~>33%)
+
+mul2	~370ms (faster but only slightly)
+mul3	~360ms (also faster but minimal and negligible)
+
+[optional] Do you see any pattern to when mul1 is faster/slower than mul2 on different processors/computers/whatever? Feel free to share timing results (but not solutions) with others in the course if it helps form a pattern.
+
+mul1 is slower than mul2 on my laptop but not by much (~400ms vs ~370ms)  These results may vary differently on a different CPU or even a different laptop utilizing Linux rather than a VM
+
+

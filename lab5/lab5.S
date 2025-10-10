@@ -44,6 +44,7 @@ add $1, %rdx #counter++
 jmp fib_RECURSIVE
 
 RETURN_ZERO:
+mov $0, %rax
 pop %r12
 ret 
 RETURN_ONE:
