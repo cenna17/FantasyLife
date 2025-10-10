@@ -12,6 +12,57 @@
 .global mul1
 .global mul2
 
+fibonacci: #rdi = n
+push %r12
+mov %rdi, %r12 # save n
+
+#init x+y=next_fib_num {0,1}
+mov $0, %rdi #init x = 0
+mov $1, %rsi #init y = 0
+mov $1, %rdx #counter = 1
+
+jmp fib_RECURSIVE
+
+fib_RECURSIVE:
+cmp $0, %r12 
+je RETURN_ZERO
+cmp $1, %r12
+je RETURN_ONE
+cmp %rdx, %r12
+je RETURN_SUM
+
+#SUM = x + y
+push %rdx
+push %rdi
+push %rsi
+#call printReg
+pop %rsi
+pop %rdi
+pop %rdx
+add %rdi, %rcx
+add %rsi, %rcx
+
+mov %rsi, %rdi
+mov %rcx, %rsi
+mov $0, %rcx
+
+add $1, %rdx #counter++
+jmp fib_RECURSIVE
+
+RETURN_ZERO:
+pop %r12
+ret 
+RETURN_ONE:
+pop %r12
+mov $1, %rax
+ret 
+
+RETURN_SUM:
+pop %r12
+mov %rsi, %rax
+ret 
+
+
 #x=rdi a=rsi b=rdx c=rcx d=r8
 polynomial1:
 push %rbx
@@ -84,59 +135,12 @@ mul %rsi
 ret
 
 mul2:
+mov %rdi, %rsi
 shl $16, %rdi
 add $1, %rdi
+add %rsi, %rdi
+
 mov %rdi, %rax
 ret
-
-
-fibonacci: #rdi = n
-push %rbx
-mov %rdi, %rbx # save n
-mov $0, %rax # sum = 0
-
-#init x+y=next_fib_num {0,1}
-mov $0, %rdi #init x = 0
-mov $1, %rsi #init y = 0
-mov $1, %rdx #counter = 1
-
-push %rdi
-push %rsi
-jmp fib_RECURSIVE
-
-fib_RECURSIVE:
-pop %rsi #load y
-pop %rdi #load x
-
-cmp $0, %rbx 
-je RETURN_ZERO
-cmp $1, %rbx
-je RETURN_ONE
-cmp %rdx, %rbx
-je RETURN_SUM
-
-#SUM = x + y
-add %rsi, %rax
-add %rdi, %rax
-
-add $1, %rdx #counter++
-mov %rsi, %rdi
-mov %rax, %rsi
-push %rdi
-push %rsi
-jmp fib_RECURSIVE
-RETURN_ZERO:
-#pop %rbx
-ret 
-RETURN_ONE:
-#pop %rbx
-mov $1, %rax
-ret 
-
-RETURN_SUM:
-#pop %rbx
-ret 
-
-
 
 

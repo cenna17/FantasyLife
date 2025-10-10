@@ -18,7 +18,11 @@
     elapsed += (end.tv_sec - start.tv_sec) * 1e3 + (end.tv_nsec - start.tv_nsec) / 1e6; \
     printf("%23s calculated %18ld in %7.1f ms\n", #CODE, total, elapsed - overhead); \
 } while(0)
-
+void printReg(uint64_t one, uint64_t two){
+	printf("rdi: %li", one); 
+	printf("   rsi: %li \n", two);
+	return; 
+}
 int main() {
     double elapsed, overhead = 0;
     struct timespec start, end;
@@ -28,9 +32,11 @@ int main() {
            fibonacci(2), fibonacci(3), fibonacci(4), fibonacci(5), fibonacci(6),
            fibonacci(7), fibonacci(8), fibonacci(9));
     printf("fibonacci(35) == 9227465 == %ld\n", fibonacci(35));
-
+	
+    //printf("%ld", fibonacci(9)); 
     // Do some meaningless work to wake up the processor (we hope)...
-    CODE_TEST(warmup(1));
+
+	CODE_TEST(warmup(1));
     CODE_TEST(warmup(2));
     CODE_TEST(warmup(3));
     CODE_TEST(warmup(4));
