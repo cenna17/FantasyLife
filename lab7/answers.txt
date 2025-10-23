@@ -1,0 +1,18 @@
+QUESTION 1:
+
+gcc -Wall -Wpedantic -std=c17 -march=haswell -O3 tests.c lab7c.c lab7.S -o test
+
+gcc -Wall -Wpedantic -std=c17 -march=haswell -O3 lab7c.c timing.c lab7.S -o timing03
+gcc -Wall -Wpedantic -std=c17 -march=haswell lab7c.c timing.c lab7.S -o timing_reg
+
+QUESTION 2:
+
+With O3 option turned on, the C-implementations is much faster with dot function and comparable to the Assembly implementation with dot_struct function.
+
+With O3 option turned off HOWEVER, the assembly funciton is significantly faster (see below)
+
+Format fcn: Assembly vs C timing 
+dot 1.64ns/elt VS 3.33ns/elt
+dot_struct 1.67ns/elt VS 3.59ns/elt
+
+

@@ -1,7 +1,3 @@
-# lab7.S (Linux x86-64, System V ABI)
-# RtlUniform Generator version (MUSL constants)
-# seed = seed * 6364136223846793005 + 1
-# return seed >> 33
 .section .note.GNU-stack,""
 .extern lab7
     .section .data
@@ -12,11 +8,57 @@ seed:
     .section .text
     .globl randint
     .globl dot
-    .globl fill_array
     .globl dot_struct
-dot_struct: 
-ret
-dot: 
+    .globl fill_array
+
+dot_struct: # RDI = arr of pairs {[a,b] ... [x,y]}; RSI = len
+push %r12
+    mov $0, %rax        # sum = 0
+    cmp $0, %rsi       # if n == 0, return 0
+    je RETURN_DOT_STRUCT
+    mov %rsi, %r12 # save arr_length
+    mov $0, %r9	#counter = 0
+    jmp LOOP_DOT_STRUCT
+
+LOOP_DOT_STRUCT: #NOTEE: RDI holds the pointer to start address of arr 1
+cmp %r9, %r12
+je RETURN_DOT_STRUCT
+    movq (%rdi), %rcx      # load arr[i].a
+    movq 8(%rdi), %r8      # load arr[i].b
+    imulq %r8, %rcx        # multiply a*b
+    addq %rcx, %rax        # sum += a*b
+
+    addq $16, %rdi         # move pointer to next pair64_t
+    add $1, %r9
+    jmp LOOP_DOT_STRUCT
+RETURN_DOT_STRUCT:
+	pop %r12
+	ret
+dot: # RDI = arr_1; RSI = arr_2; RDX = arr_3
+    cmp $0, %rdx
+    je RETURN_DOT
+    push %r12
+    mov %rdx, %r12 # save arr_length
+    mov $0, %r9	#counter = 0
+    mov $0, %rax #sum = 0
+
+loop_dot:
+    cmp %r9, %r12
+    je RETURN_DOT
+
+# notee: in the beginning rdi and rsi point to start of arr1 and arr2
+    movq (%rdi), %rcx      # load arr1[i] 
+    movq (%rsi), %r8       # load arr2[i]
+
+    imulq %r8, %rcx        # RCX = arr1[i] * arr2[i]
+    addq %rcx, %rax        # sum += product
+    addq $8, %rdi          # move to next arr1 element
+    addq $8, %rsi          # move to next arr2 element
+    add $1, %r9            # counter++
+    jmp loop_dot
+
+RETURN_DOT:
+pop %r12
 ret
 
 
@@ -46,20 +88,12 @@ ret
 
 
 randint:
-    # Load current seed into RAX
-    movq seed(%rip), %rax
+movq seed(%rip), %rax	# Load current seed into RAX
+movabs $6364136223846793005, %r8 #IDK?? See lab7 instructions
+imulq %r8, %rax 	# seed * multiplier
+add $1, %rax
+movq %rax, seed(%rip)	# Store updated seed back to memory
+shrq $33, %rax    # shift right by 33 bits; return val in RAX
 
-    movabs $6364136223846793005, %r8 #IDK?? See lab7 instructions
-
-    # Perform seed * multiplier
-    imulq %r8, %rax
-
-    add $1, %rax
-
-    # Store updated seed back to memory
-    movq %rax, seed(%rip)
-
-    shrq $33, %rax    # shift right by 33 bits → return value now in %rax
-
-    ret
+ret
 
