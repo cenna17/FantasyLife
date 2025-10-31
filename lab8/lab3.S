@@ -1,0 +1,77 @@
+
+ .section .note.GNU-stack,""
+ 	.extern lab3
+	.global abs_value
+	.global power2
+	.global hailstone_length
+
+	.text
+
+power2:
+push %r12
+mov %rdi, %r12 #rdi -> arg1 (holds n)
+mov $1, %rdx #rdx -> arg3 (sum)
+jmp loop
+
+loop:
+cmp $0, %r12 # if n < 0
+jl loop_end  # TRUE -> END 
+
+#ELSE
+mov %rdx, %rdi #move sum as 1st arg for print call
+push %rdx # save sum 
+call print_uint64 #print sum
+pop %rdx #load sum
+
+add %rdx, %rdx # double sum
+sub $1, %r12 # countdown n
+jmp loop
+
+loop_end:
+pop %r12
+ret 
+
+hailstone_length: # Given integer n: IF EVEN => n = n/2; IF_ODD, n = 3n+1.
+mov $0, %rsi #set length = 0
+
+test $1, %rdi # BITWISE AND WITH N - 0 if even; 1 if odd
+
+jnz odd # zero-flag output 1 if odd => jnz (jump if not zero) => DO IF ODD
+jz even
+
+even: #rdi - n    rsi = length
+cmp $0, %rdi #BASE CASE
+je return_length
+
+shr $1, %rdi #Divide n by 2
+add $1, %rsi
+
+test $1, %rdi # BITWISE AND WITH N - 0 if even; 1 if odd
+
+jnz odd # zero-flag output 1 if odd => jnz (jump if not zero) => DO IF ODD
+jz even
+
+odd: #receives odd # n in rdi
+cmp $1, %rdi
+je return_length
+
+imul $3, %rdi
+add $1, %rdi
+
+add $1, %rsi
+
+jmp even
+
+return_length: 
+mov %rsi, %rax
+ret 
+
+abs_value: 
+cmp $0, %rdi 
+jl calculate_twos_comp
+mov %rdi, %rax
+ret
+calculate_twos_comp: 
+neg %rdi
+mov %rdi, %rax
+ret
