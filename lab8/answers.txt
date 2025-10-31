@@ -1,0 +1,39 @@
+Array size: 40000kB
+Calculated 0 in     0.00ms on 1*5120000 array.
+Calculated 0 in     0.00ms on 2*2560000 array.
+Calculated 0 in     0.00ms on 4*1280000 array.
+Calculated 0 in     0.00ms on 5*1024000 array
+
+Calculated 0 in     0.01ms on 1024*5000 array.
+Calculated 0 in     0.01ms on 1250*4096 array.
+
+Calculated 0 in     0.03ms on 4096*1250 array.
+Calculated 0 in     0.03ms on 5000*1024 array.
+Calculated 0 in     0.03ms on 5120*1000 array.
+
+Calculated 0 in     6.56ms on 1024000*5 array.
+Calculated 0 in     8.25ms on 1280000*4 array.
+Calculated 0 in    16.66ms on 2560000*2 array.
+Calculated 0 in    33.74ms on 5120000*1 array.
+How much faster was the by-row access of the rectangular array than the by-column when your array fits in L1 cache? (Compare the worst case of each.) 
+
+When two numbers are both in the same level of cache eg L1, we see their results to be quite comparabe (middle results) in terms of time whereas when the number is closer and the other further away from l1 cache (possibly in memory), then at worst, computation of their sum is dozens times longer using (large# x small#) thant (small# x large#).
+
+How does the performance of the by-column summation change as the array gets larger than the caches?
+
+Yes, attributing to the advantage of some data being more proximate (faster) to the cpu by being in higher leves of cache (L1->L2->l3) therefore faster access versus from being further away from the cpu (slower) as numbers get larger.
+
+########################################################################################
+Results: 
+                   warmup calculated  218020677 in 583 ms
+                   warmup calculated  218020677 in 565 ms
+                   warmup calculated  218020677 in 588 ms
+       hailstone_length_c calculated  218020677 in 571 ms
+         hailstone_length calculated  218020677 in 621 ms
+    hailstone_length_cmov calculated  218020677 in 532 ms
+
+Did avoiding the branch with a conditional move speed up the hailstone length calculation? By how much? How did the C code compare?
+
+Yes but compared to C-code, it is only by about 10% (571ms in .C VS 532ms in .S)
+I used -O3 option to test this.
+
