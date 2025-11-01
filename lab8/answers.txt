@@ -1,24 +1,37 @@
 Array size: 40000kB
-Calculated 0 in     0.00ms on 1*5120000 array.
-Calculated 0 in     0.00ms on 2*2560000 array.
-Calculated 0 in     0.00ms on 4*1280000 array.
-Calculated 0 in     0.00ms on 5*1024000 array
 
-Calculated 0 in     0.01ms on 1024*5000 array.
-Calculated 0 in     0.01ms on 1250*4096 array.
+Calculated 0.638628 in     0.00ms on 1*5120000 array.
+Calculated 0.944658 in     0.00ms on 2*2560000 array.
+Calculated 1.05897 in     0.00ms on 4*1280000 array.
+Calculated 1.73885 in     0.00ms on 5*1024000 array.
+Calculated 1.34899 in     0.00ms on 8*640000 array.
+Calculated 1.17439 in     0.00ms on 10*512000 array.
+Calculated 2.90371 in     0.00ms on 16*320000 array.
+Calculated 2.00868 in     0.00ms on 20*256000 array
 
-Calculated 0 in     0.03ms on 4096*1250 array.
-Calculated 0 in     0.03ms on 5000*1024 array.
-Calculated 0 in     0.03ms on 5120*1000 array.
+Calculated -156.928 in     0.06ms on 40000*128 array.
+Calculated -138.605 in     0.06ms on 40960*125 array.
+Calculated -154.61 in     0.08ms on 51200*100 array.
+Calculated -96.4212 in     0.10ms on 64000*80 array.
+Calculated -38.5155 in     0.13ms on 80000*64 array.
+Calculated 48.7466 in     0.18ms on 102400*50 array.
+Calculated -8.55914 in     0.21ms on 128000*40 array.
+Calculated 6.78222 in     0.26ms on 160000*32 array.
+Calculated -77.6144 in     0.56ms on 204800*25 array.
+Calculated -85.9133 in     0.47ms on 256000*20 array.
+Calculated 165.784 in     0.65ms on 320000*16 array.
 
-Calculated 0 in     6.56ms on 1024000*5 array.
-Calculated 0 in     8.25ms on 1280000*4 array.
-Calculated 0 in    16.66ms on 2560000*2 array.
-Calculated 0 in    33.74ms on 5120000*1 array.
+
+Calculated 212.419 in     0.87ms on 512000*10 array.
+Calculated 147.452 in     2.08ms on 640000*8 array.
+Calculated -26.7847 in     2.11ms on 1024000*5 array.
+Calculated -66.3617 in     5.06ms on 1280000*4 array.
+Calculated -416.637 in     7.77ms on 2560000*2 array.
+Calculated -86.0899 in    22.60ms on 5120000*1 array.
+
 How much faster was the by-row access of the rectangular array than the by-column when your array fits in L1 cache? (Compare the worst case of each.) 
 
-When two numbers are both in the same level of cache eg L1, we see their results to be quite comparabe (middle results) in terms of time whereas when the number is closer and the other further away from l1 cache (possibly in memory), then at worst, computation of their sum is dozens times longer using (large# x small#) thant (small# x large#).
-
+When two numbers are both in L1 cache, retrieval of the data is faster, tehreebythe calculations are completed quicker comparabe to (middle results) when data being retireved were further away from l1 cache (possibly in memory), then at worst, computation of their sum is dozens times longer.  This may be due some parts of the data used in the calculation is stored farther away from L1 whereas another number used (presumable the smaller #) is stored in L1.
 How does the performance of the by-column summation change as the array gets larger than the caches?
 
 Yes, attributing to the advantage of some data being more proximate (faster) to the cpu by being in higher leves of cache (L1->L2->l3) therefore faster access versus from being further away from the cpu (slower) as numbers get larger.

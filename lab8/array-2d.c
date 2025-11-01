@@ -26,8 +26,7 @@ DATA_T* create_array(uint64_t length) {
 }
 
 DATA_T sum_array_row(DATA_T* array, uint64_t width, uint64_t height) {
-//	DATA_T* total = (DATA_T*)malloc(sizeof(uint64_t));
-	uint64_t sum = 0; 
+	DATA_T sum = 0; 
 	for (int i = 0; i < width*height; i++){
 		sum += array[i]; 
 	}
@@ -35,7 +34,7 @@ DATA_T sum_array_row(DATA_T* array, uint64_t width, uint64_t height) {
 }
 
 DATA_T sum_array_col(DATA_T* array, uint64_t width, uint64_t height) {
-	uint64_t sum = 0; 
+	DATA_T sum = 0; 
 	for (int w = 0; w < width; w++){
 		sum += array[w] + array[w+3];
 	}
