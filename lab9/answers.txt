@@ -1,0 +1,22 @@
+==5623== 
+==5623== 
+==5623== HEAP SUMMARY:
+==5623==     in use at exit: 0 bytes in 0 blocks
+==5623==   total heap usage: 31 allocs, 31 frees, 84,560 bytes allocated
+==5623== 
+==5623== All heap blocks were freed -- no leaks are possible
+==5623== 
+==5623== For lists of detected and suppressed errors, rerun with: -s
+==5623== ERROR SUMMARY: 9 errors from 3 contexts (suppressed: 0 from 0)
+
+Question 1: Yup :) :)
+
+Question 2: The actual swapping of the values utilizes few registers and can be completed with few instructions so I would assume the most time consuming part is trying to realize whether or not a swap is neccessary.  Therefore, much of the time should be spent of branch (mis)predictions as the random values makes it more difficult to predict the proceeding behaviour of the algorithm based on the preceeding behaviour (swap/no swap).  Consider the decision of swap or no swap with two numbers, the resulting comparison is a y/n answers.  There are only two options to choose (branch from), however, if the processor has to make (predict) this decision prior to the comparison results are out based on previous results, then that is also an extra step the processor must take.  Misprediction further adds to the time on the next prediction as if the previous prediction is wrong.  If it predicted swap on the 2nd and3rd number encounter but was wrong on the 2nd number then the processor may need to make the prediction on the 3rd number again.  Then 3rd prediction is wrong and has to make new prediction for 4th number and so on ...
+
+Question 3: It checks for data access activity in L1 cache.  Loads misses, loads ... considers the question, of all the comparisons between two numbers made during the execution of bubble sort with a random array, how many of those were made using data (numbers) stored in L1 cache. 
+
+Question 4: ~23% for random and <1% for when it is already sorted.  This can be attributed to that the processor recongnized a pattern between the numbers and results (possibly from early results for numbers that were accessed first) and so made better predicting performance towards the end.
+
+Question 5: There is a significant difference, although not as large as question 4 (~23x vs ~5x difference).  When the access was made to data that is 'farther' away from L1 ('increased' height in array) then the number of cache misses is significantly higher.  As mentioned form previous lab expectation, this may be attributed to the advantage of some data being stored more proximate to the processor.  
+
+Question 6: Yes! I received a report of ~5.7M for non-shuffled index array and more than doubled for shuffled. 
