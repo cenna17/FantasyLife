@@ -19,4 +19,4 @@ Question 4: ~23% for random and <1% for when it is already sorted.  This can be 
 
 Question 5: There is a significant difference, although not as large as question 4 (~23x vs ~5x difference).  When the access was made to data that is 'farther' away from L1 ('increased' height in array) then the number of cache misses is significantly higher.  As mentioned form previous lab expectation, this may be attributed to the advantage of some data being stored more proximate to the processor.  
 
-Question 6: Yes! I received a report of ~5.7M for non-shuffled index array and more than doubled for shuffled. 
+Question 6: Yes!  As prediced, the number of cache missed were higher for the 'higher 2d array' than if we had treadted the array as 1D, accessing its data in order.
