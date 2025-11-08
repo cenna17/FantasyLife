@@ -103,6 +103,14 @@ void pdq_sort(DATA_T* array, uint64_t length) {
 
 void bubble_sort(DATA_T* array, uint64_t length) {
     // TODO
+    for (uint64_t i = 0; i < length-1; i++){
+for (uint64_t j = i + 1; j < length; j++){
+if (array[i] > array[j])
+	{DATA_T tmp = array[j]; 
+	array[j] = array[i]; 
+	array[i] = tmp;}
+}
+    }
 }
 
 
