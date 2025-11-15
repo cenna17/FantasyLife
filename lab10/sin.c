@@ -1,11 +1,12 @@
+#define _POSIX_C_SOURCE 199309L
+#include <inttypes.h>
 #include <assert.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <math.h>
-#include <time.h>  // for simple timing
+#include <time.h>  
 
-// x87 version signature: void sin_x87(double* input, double* output, uint64_t length)
-// Standard library version
 #define TIMING_RESULT(DESCR, CODE) do { \
     struct timespec start, end; \
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start); \
@@ -15,15 +16,32 @@
     printf("%25s took %7.1f ms\n", DESCR, elapsed * 1000); \
 } while(0)
 
+#define ASSERT_PRINT(expr) do {                 \
+    if ((expr)) {                               \
+        printf("%s: PASSED \n", #expr);       \
+    } else {                                    \
+        printf("%s: FAILED \n", #expr);       \
+    }                                           \
+} while(0)
+
 void sin_stdlib(double* input, double* output, uint64_t length) {
     for (uint64_t i = 0; i < length; i++) {
+	    printf ("trying to sin(%f)\n", input[i]);
         output[i] = sin(input[i]);
     }
 }
 
 int main() {
-    const uint64_t length = 10;
+    const uint64_t length = 16;
     double* input = create_array(length);
+    if (!input) {
+    fprintf(stderr, "ERROR: input array is NULL!\n");
+    return;
+}
+else{
+	printf("printing input array: \n");
+for(int i = 0; i < length; i++){printf("input %i: %f\n", i, input[i]);}
+}
     double* output_stdlib = (double*)malloc(length * sizeof(double));
     double* output_x87 = (double*)malloc(length * sizeof(double));
     assert(output_stdlib != NULL);
@@ -40,7 +58,7 @@ int main() {
                i, input[i], output_stdlib[i], output_x87[i]);}
 
     // Timing very big array
-    const uint64_t big_len = 1000000;
+    const uint64_t big_len = 100;
     double* big_input = create_array(big_len);
     double* big_output_stdlib = (double*)malloc(big_len * sizeof(double));
     double* big_output_x87 = (double*)malloc(big_len * sizeof(double));

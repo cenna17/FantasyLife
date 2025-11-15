@@ -1,10 +1,21 @@
 .section .note.GNU-stack,""
-.extern lab10
-    .section .data
     .section .text
-    .globl dot_double
-    .globl map_poly_double #void map_poly_double(double* input, double* output, uint64_t length, double a, double b, double c, double d);
-                            # Calculate x*(x*(a*x + b) + c) + d FOR ALL X-VALUES IN INPUT ARRAY
+   .global dot_double
+    .type dot_double, @function
+
+    .global dot_single
+    .type dot_single, @function
+
+    .global map_poly_double
+    .type map_poly_double, @function
+
+    .global map_poly_single
+    .type map_poly_single, @function
+
+    .global sin_x87
+    .type sin_x87, @function 
+    
+
 
 dot_double: # RDI = start of arr_1; RSI = start of arr_2; RDX = arr_length
     pxor    %xmm2, %xmm2 
