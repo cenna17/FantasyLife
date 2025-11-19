@@ -20,7 +20,16 @@ Node* head = NULL;
 Node* tail = NULL;
 uint64_t globalID = 0;
 /* ============================ TIMING THINGS ============================ */
+double time_diff_sec(struct timespec start, struct timespec end) {
+    long sec  = end.tv_sec  - start.tv_sec;
+    long nsec = end.tv_nsec - start.tv_nsec;
 
+    if (nsec < 0) {
+        sec -= 1;
+        nsec += 1000000000L;
+    }
+    return sec + nsec / 1e9;
+}
 /* ============================ MAKE NODE ============================ */
 Node* CreateNode(Category cat) {
     Node* newNode = (Node*) malloc(sizeof(Node));
@@ -190,6 +199,8 @@ int main() {
     const int NUM_INSERT_FUNCS = sizeof(insert_tests)/sizeof(insert_tests[0]);
 
     // ------------- RUN ALL COMBINATIONS -------------
+    struct timespec t_start, t_end;
+    clock_gettime(CLOCK_MONOTONIC, &t_start);
 
     for (int pattern = 0; pattern < 2; pattern++) {
         printf("\n=============================================\n");
@@ -215,5 +226,11 @@ int main() {
         }
     }
 
+    clock_gettime(CLOCK_MONOTONIC, &t_end);
+    double elapsed_ms =
+        (t_end.tv_sec - t_start.tv_sec) * 1000.0 +
+        (t_end.tv_nsec - t_start.tv_nsec) / 1e6;
+
+    printf("Elapsed: %.3f ms\n", elapsed_ms);
     return 0;
 }
