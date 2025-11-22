@@ -3,7 +3,7 @@
 
 //  Dot product double 
 double dot_double_vc(double* arr1, double* arr2,uint64_t n) {
-    /*
+    
     /*
         arr1 = [1.0, 2.0, 3.0, 4.0]  
         arr2 = [5.0, 6.0, 7.0, 8.0]
