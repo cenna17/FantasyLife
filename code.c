@@ -1,3 +1,9 @@
+/*
+clang -O3 -march=native -flto -o code code.c && ./code
+
+*/
+
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -29,6 +35,18 @@ double time_diff_sec(struct timespec start, struct timespec end) {
         nsec += 1000000000L;
     }
     return sec + nsec / 1e9;
+}
+
+double time_diff_ms(struct timespec start, struct timespec end) {
+    long sec  = end.tv_sec  - start.tv_sec;
+    long nsec = end.tv_nsec - start.tv_nsec;
+
+    if (nsec < 0) {
+        sec  -= 1;
+        nsec += 1000000000L;
+    }
+
+    return sec * 1000.0 + nsec / 1e6;
 }
 /* ============================ MAKE NODE ============================ */
 Node* CreateNode(Category cat) {
@@ -83,6 +101,19 @@ uint32_t* CreateArray(uint16_t num_category) {
     return array;
 }
 
+/* ============================ HELPERS ============================ */
+
+void FreeList() {
+    Node* curr = head;
+    while (curr) {
+        Node* tmp = curr;
+        curr = curr->next;
+        free(tmp);
+    }
+    head = tail = NULL;
+    globalID = 0;
+}
+
 /* ============================ ADD TALLY TO ARRAY ============================ */
 
 void UpdateCategoryArray(Node* node, uint32_t* category_array) {
@@ -119,58 +150,47 @@ Question:
 */
 void AddNode_Timed(uint16_t option, uint64_t num_nodes, void (*insert_option)(Node*), uint32_t* category_array) {
     struct timespec t_start, t_end;
-    double total_insertion_time = 0.0;
+    double total_insert_time = 0.0;
     double total_update_time = 0.0;
 
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t_start); // start total time
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t_start);
 
     uint16_t pattern_index = 0;
     for (uint64_t i = 0; i < num_nodes; i++) {
+        //Create node
         Category cat = (option == 0) ? (Category)(pattern_index++ % NUM_CATS)
                                      : (Category)(rand() % NUM_CATS);
-
         Node* newNode = CreateNode(cat);
 
-        // Time category update
+        //Time category array update
         struct timespec start_update, end_update;
         clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_update);
         UpdateCategoryArray(newNode, category_array);
         clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_update);
         total_update_time += time_diff_sec(start_update, end_update);
 
-        // Time list insertion
+        //Time linked list insertion
         struct timespec start_insert, end_insert;
         clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_insert);
         insert_option(newNode);
         clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end_insert);
-        total_insertion_time += time_diff_sec(start_insert, end_insert);
+        total_insert_time += time_diff_sec(start_insert, end_insert);
     }
 
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t_end); // end total time
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t_end);
+
     double total_time = time_diff_sec(t_start, t_end);
-
     printf("Total time to build list: %.6f s\n", total_time);
-    printf("Average insertion time per node: %.9f s\n", total_insertion_time / num_nodes);
-    printf("Average category update time per node: %.9f s\n", total_update_time / num_nodes);
-}
+    printf("Average insertion time per node (pointer traversal + possible malloc): %.9f s\n", total_insert_time / num_nodes);
+    printf("Average category update time per node (branch prediction): %.9f s\n", total_update_time / num_nodes);
 
-/* ============================ HELPERS ============================ */
-
-void FreeList() {
-    Node* curr = head;
-    while (curr) {
-        Node* tmp = curr;
-        curr = curr->next;
-        free(tmp);
-    }
-    head = tail = NULL;
-    globalID = 0;
+    FreeList();
 }
 
 int main() {
     srand(time(NULL));
     const uint64_t NUM_NODES_SMALL = 100;      // for timing + branch prediction tests
-    const uint64_t NUM_NODES_LARGE = 10000;    // for locality tests
+    const uint64_t NUM_NODES_LARGE = 100000000;    // for locality tests
 
     // CPU WARMUP 
     for (int i = 0; i < 20000; i++) {
@@ -179,7 +199,7 @@ int main() {
     }
     FreeList();
 
-    // ------------- DEFINE TEST CASES -------------
+    // ------------- DEFINE LINKED TEST CASES -------------
 
     struct {
         const char* name;
@@ -187,7 +207,7 @@ int main() {
         uint64_t num_nodes;
     } insert_tests[] = {
         {"Insert_Head",             Insert_Head,             NUM_NODES_LARGE},
-        {"Insert_Tail_No_PTR",      Insert_Tail_No_PTR,      NUM_NODES_LARGE},
+        //{"Insert_Tail_No_PTR",      Insert_Tail_No_PTR,      NUM_NODES_LARGE},
         {"Insert_Tail_With_PTR",    Insert_Tail_With_PTR,    NUM_NODES_LARGE},
     };
 
@@ -232,5 +252,70 @@ int main() {
         (t_end.tv_nsec - t_start.tv_nsec) / 1e6;
 
     printf("Elapsed: %.3f ms\n", elapsed_ms);
+
+    // ============================ DEFINE ARRAY-BASED TEST ============================
+printf("\n=============================================\n");
+printf("ARRAY-BASED IMPLEMENTATION\n");
+printf("=============================================\n\n");
+
+// Number of nodes (students) same as linked list for comparison
+const uint64_t NUM_ARRAY = NUM_NODES_LARGE;  
+
+// Create array to store each student's major
+Category *student_array = malloc(NUM_ARRAY * sizeof(Category));
+if (!student_array) {
+    perror("malloc failed");
+    exit(1);
+}
+
+// Create category count array
+uint32_t *category_array_array = CreateArray(NUM_CATS);
+
+double insert_time = 0.0;
+double update_time = 0.0;
+
+// ------------------------- INSERT + CATEGORY UPDATE -------------------------
+clock_gettime(CLOCK_MONOTONIC, &t_start);
+
+for (uint64_t i = 0; i < NUM_ARRAY; i++) {
+    // Deterministic or random pattern (can test both)
+    Category cat = (i % NUM_CATS); // deterministic
+    //Category cat = rand() % NUM_CATS; // random
+
+    student_array[i] = cat;
+
+    // Update category array
+    category_array_array[cat]++;
+}
+
+clock_gettime(CLOCK_MONOTONIC, &t_end);
+insert_time = time_diff_ms(t_start, t_end);
+
+printf("Array insertion + category update time (deterministic): %.3f ms\n", insert_time);
+
+// ------------------------- RESET CATEGORY ARRAY -------------------------
+for (int i = 0; i < NUM_CATS; i++)
+    category_array_array[i] = 0;
+
+// ------------------------- RANDOM PATTERN TEST -------------------------
+clock_gettime(CLOCK_MONOTONIC, &t_start);
+
+for (uint64_t i = 0; i < NUM_ARRAY; i++) {
+    Category cat = rand() % NUM_CATS;
+
+    student_array[i] = cat;
+
+    category_array_array[cat]++;
+}
+
+clock_gettime(CLOCK_MONOTONIC, &t_end);
+insert_time = time_diff_ms(t_start, t_end);
+
+printf("Array insertion + category update time (random): %.3f ms\n", insert_time);
+
+// ------------------------- CLEANUP -------------------------
+free(student_array);
+free(category_array_array);
+
     return 0;
 }

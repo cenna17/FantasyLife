@@ -34,7 +34,7 @@ je RETURN_DOT_STRUCT
 RETURN_DOT_STRUCT:
 	pop %r12
 	ret
-dot: # RDI = arr_1; RSI = arr_2; RDX = arr_3
+dot: # RDI = arr_1; RSI = arr_2; RDX = arr_length
     cmp $0, %rdx
     je RETURN_DOT
     push %r12
@@ -89,7 +89,7 @@ ret
 
 randint:
 movq seed(%rip), %rax	# Load current seed into RAX
-movabs $6364136223846793005, %r8 #IDK?? See lab7 instructions
+move's $6364136223846793005, %r8 #IDK?? See lab7 instructions
 imulq %r8, %rax 	# seed * multiplier
 add $1, %rax
 movq %rax, seed(%rip)	# Store updated seed back to memory
