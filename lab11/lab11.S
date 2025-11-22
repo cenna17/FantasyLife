@@ -29,7 +29,7 @@ loop_dot_vec:
 
     vmovupd (%rdi, %rcx, 8), %ymm0   # load 4 doubles from arr1[i to i+3] 
                                     #       => ymm0 = [1.0, 2.0, 3.0, 4.0]
-    vmovapd (%rsi,%rcx,8), %ymm1    # load 4 doubles from arr2[i..i+3]
+    vmovupd (%rsi,%rcx,8), %ymm1    # load 4 doubles from arr2[i..i+3]
                                     #       => ymm1 = [5.0, 6.0, 7.0, 8.0]
 
     vmulpd  %ymm1, %ymm0, %ymm0     # ymm0 = ymm0 * ymm1 (4 parallel multiplications)
@@ -68,8 +68,8 @@ loop_dot_single_vec:
     cmp %rcx, %rdx
     je RETURN_DOT_SINGLE_VEC
 
-    vmovaps (%rdi,%rcx,4), %ymm0   # load 8 floats from arr1
-    vmovaps (%rsi,%rcx,4), %ymm1   # load 8 floats from arr2
+    vmovups (%rdi,%rcx,4), %ymm0   # load 8 floats from arr1
+    vmovups (%rsi,%rcx,4), %ymm1   # load 8 floats from arr2
 
     vmulps %ymm1, %ymm0, %ymm0     # add arr1 and arr2 element wise, the final answer is in arr1
     vaddps %ymm0, %ymm2, %ymm2     # sum += ymm0
@@ -106,8 +106,8 @@ loop_poly_vec:
     cmp     %rcx, %rdx            # while counter < length
     je     done_poly_vec               
 
-    vmovapd (%rdi,%rcx,8), %ymm4     # load 4 doubles from input x[i]
-    vmovapd %ymm4, %ymm5             # tmp = x
+    vmovupd (%rdi,%rcx,8), %ymm4     # load 4 doubles from input x[i]
+    vmovupd %ymm4, %ymm5             # tmp = x
 
     # Calculating y = ((ax + b)x + c)x + d
 
@@ -118,7 +118,7 @@ loop_poly_vec:
     vmulpd %ymm4, %ymm5, %ymm5       # x(x(ax + b) + c)
     vaddpd %ymm3, %ymm5, %ymm5       # x(x(ax + b) + c) + d
 
-    vmovapd %ymm5, (%rsi,%rcx,8)     # store result
+    vmovupd %ymm5, (%rsi,%rcx,8)     # store result
 
     add $4, %rcx                      # increment counter by 4 doubles
     
@@ -145,8 +145,8 @@ loop_poly_single_vec:
     cmp     %rcx, %rdx
     je      done_poly_single_vec
 
-    vmovaps (%rdi,%rcx,4), %ymm4      # load 8 floats from input
-    vmovaps %ymm4, %ymm5              # tmp = x
+    vmovups (%rdi,%rcx,4), %ymm4      # load 8 floats from input
+    vmovups %ymm4, %ymm5              # tmp = x
 
     # Horner's method: y = ((ax + b)x + c)x + d
 
@@ -157,7 +157,7 @@ loop_poly_single_vec:
     vmulps %ymm4, %ymm5, %ymm5        # x(x(ax + b) + c)
     vaddps %ymm3, %ymm5, %ymm5        # x(x(ax + b) + c) + d
 
-    vmovaps %ymm5, (%rsi,%rcx,4)      # store result
+    vmovups %ymm5, (%rsi,%rcx,4)      # store result
 
     add $8, %rcx                       # increment counter by 8 floats
     
