@@ -8,9 +8,6 @@
 
     .global map_poly_single_vec
 
-    .global sin_x87
-    .type sin_x87, @function 
-    
 
 ######################################
 /*
@@ -26,11 +23,11 @@ dot_double_vec: # RDI = start of arr_1; RSI = start of arr_2; RDX = arr_length
                                 # ymm2 = [0.0, 0.0, 0.0, 0.0]
     mov $0, %rcx	#counter = 0
 
-loop_dot:
+loop_dot_vec:
     cmp %rcx, %rdx # while counter < arr_length
-    je RETURN_DOT
+    je RETURN_DOT_VEC
 
-    vmovpd (%rdi, %rcx, 8), %ymm0   # load 4 doubles from arr1[i to i+3] 
+    vmovupd (%rdi, %rcx, 8), %ymm0   # load 4 doubles from arr1[i to i+3] 
                                     #       => ymm0 = [1.0, 2.0, 3.0, 4.0]
     vmovapd (%rsi,%rcx,8), %ymm1    # load 4 doubles from arr2[i..i+3]
                                     #       => ymm1 = [5.0, 6.0, 7.0, 8.0]
@@ -41,9 +38,9 @@ loop_dot:
     vaddpd  %ymm0, %ymm2, %ymm2     # sum_vec += product_vec
                                     # ymm2 = [5.0, 12.0, 21.0, 32.0]
     add $4, %rcx            # counter += 4; move to next 4 elements
-    jmp loop_dot
+    jmp loop_dot_vec
 
-RETURN_DOT: # ymm2 enter here as [5.0, 12.0, 21.0, 32.0] 
+RETURN_DOT_VEC: # ymm2 enter here as [5.0, 12.0, 21.0, 32.0] 
                 # ymm2 contains 4-val can can be read in split using xmm1 && xmm2
                 # xmm1 = first two num [5, 12];     xmm2 = last two num [21, 32]
 
@@ -67,9 +64,9 @@ dot_single_vec:  # RDI = arr1, RSI = arr2, RDX = length
 
 #NOTEE: vxorps is used for floats and visor is used for doubles when interpreting numbers in ymm0.  MUST NOT MIX THEM 
 
-loop_dot_single:
+loop_dot_single_vec:
     cmp %rcx, %rdx
-    je RETURN_DOT_SINGLE
+    je RETURN_DOT_SINGLE_VEC
 
     vmovaps (%rdi,%rcx,4), %ymm0   # load 8 floats from arr1
     vmovaps (%rsi,%rcx,4), %ymm1   # load 8 floats from arr2
@@ -78,9 +75,9 @@ loop_dot_single:
     vaddps %ymm0, %ymm2, %ymm2     # sum += ymm0
 
     add $8, %rcx                   # Move to next 8 floats
-    jmp loop_dot_single
+    jmp loop_dot_single_vec
 
-RETURN_DOT_SINGLE:
+RETURN_DOT_SINGLE_VEC:
     vextractf128 $1, %ymm2, %xmm1   # xmm1 = high 128 bits  (last 4 floats f4 to f7)
     vaddps  %xmm1, %xmm2, %xmm2# xmm2 = low+high = [f0+f4,f1+f5,f2+f6,f3+f7]
 
@@ -88,8 +85,9 @@ RETURN_DOT_SINGLE:
     vhaddps %xmm2, %xmm2, %xmm0     # final scalar in xmm0
 
     ret
-NOTEE: Previously vextract $1 extracted the first two numbers (also high 128) for got_double_vec
-but this time it gets last four float numbers (also high 128)
+
+#NOTEE: Previously vextract $1 extracted the first two numbers (also high 128) for got_double_vec
+#but this time it gets last four float numbers (also high 128)
 ###################################
 
 
@@ -104,9 +102,9 @@ map_poly_double_vec:
     vbroadcastsd %xmm2, %ymm2        # c -> ymm2
     vbroadcastsd %xmm3, %ymm3        # d -> ymm3
 
-loop_poly:
+loop_poly_vec:
     cmp     %rcx, %rdx            # while counter < length
-    je     done_poly               
+    je     done_poly_vec               
 
     vmovapd (%rdi,%rcx,8), %ymm4     # load 4 doubles from input x[i]
     vmovapd %ymm4, %ymm5             # tmp = x
@@ -124,9 +122,9 @@ loop_poly:
 
     add $4, %rcx                      # increment counter by 4 doubles
     
-    jmp loop_poly
+    jmp loop_poly_vec
 
-done_poly:
+done_poly_vec:
     ret
 
 ###################################
@@ -143,9 +141,9 @@ map_poly_single_vec:
     vbroadcastss %xmm3, %ymm3         # d -> ymm3
 
 
-loop_poly_single:
+loop_poly_single_vec:
     cmp     %rcx, %rdx
-    je      done_poly_single
+    je      done_poly_single_vec
 
     vmovaps (%rdi,%rcx,4), %ymm4      # load 8 floats from input
     vmovaps %ymm4, %ymm5              # tmp = x
@@ -163,21 +161,9 @@ loop_poly_single:
 
     add $8, %rcx                       # increment counter by 8 floats
     
-    jmp     loop_poly_single
+    jmp     loop_poly_single_vec
 
-done_poly_single:
+done_poly_single_vec:
     ret
 ###################################
 
-sin_x87:
-    mov $0, %rcx
-s87_loop:
-    cmp %rdx, %rcx
-    jae s87_ret
-    fldl (%rdi, %rcx, 8)
-    fsin
-    fstpl (%rsi, %rcx, 8)
-    inc %rcx
-    jmp s87_loop
-s87_ret:
-    ret
