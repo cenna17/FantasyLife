@@ -1,0 +1,77 @@
+lab11_time_unsafe
+              dot_single_c took     8.7 ms
+               dot_single took    33.0 ms
+           dot_single_vec took     9.3 ms
+            dot_single_vc took     9.0 ms
+
+              map_poly_single_c took    29.7 ms
+          map_poly_single took    44.4 ms
+      map_poly_single_vec took    22.8 ms
+       map_poly_single_vc took    28.4 ms
+
+/lab11_time
+             dot_single_c took    37.3 ms
+               dot_single took    33.8 ms
+           dot_single_vec took    10.2 ms
+            dot_single_vc took     9.2 ms
+
+              map_poly_single_c took    30.9 ms
+          map_poly_single took    34.5 ms
+      map_poly_single_vec took    23.5 ms
+       map_poly_single_vc took    25.8 ms
+
+
+Question #1: Without any compiler optimization, where are the local variables (n and is_even) stored in hailstone_length? How does that change at -O1?
+
+At -O0, they are stored in the stack at no compiler optimization.
+At -O1 optimization, the instruction set became much shorter in comparizon to -O0 moving fewer values across registers
+and focused on performing direct arithmetic operations (sub, add, and shift).  
+
+
+Question #2: For hailstone_length at -O2, how is 3*n+1 calculated?
+
+By directly accessing and modifying the value using the rdi as a pointer.
+Instruction: lea rdi, [rdi + 1, rdi*2]
+   
+Question #3: For hailstone_length, a very surprising optimization occurs between -O1 and -O2. What? (Hint: look for the recursive call.)
+
+It looks like in -O1, the function recursively calls hailstone length function but when using -O2, the function recursion branches to use the .L5 instruction set as a loop and keeps all of its variables inside registers.
+  
+Question #4: Was map_poly_single_c vectorized and dot_single_c not at -O3? How can you tell?
+Yes.  dot_single_c with -O3 option compiles to use a 'addss' instruction as part of its instruction set to 
+complete its task.  This is a scalar instruction not SIMD.  Whereas map_poly_single_c with -O3 option compiles 
+to use all vectorized SIMD instructions: movups, mulps, addps
+
+Question #5: How did that change with -funsafe-math-optimizations?
+Using -O3 and -funsafe together produced an instruction set that was fully vectorized but strangely, 
+usign -funsafe option alone without -O3 produced a scalar instructions rather than full vectorization for both 
+map and dot implementation.
+
+Question #6: How did the lab 11 performance change with -funsafe-math-optimizations? How did the C compare to the hand-written assembly or vectorclass implementations now?
+
+Using -funsafe option, dot_single_c implementation took much longer (~4x longer) while the dot_single vectorized implementations took approximately the same amount of time for both options.  Meanwhile the map_poly_single_c imlementation 
+took slightly longer (~8s) than the unsafe option and the cextorized implementaion of bothe functions remained relatively similar performance speed regardless of the inclusion of the -unsafe option.
+
+lab11_time_unsafe
+              dot_single_c took     8.7 ms
+               dot_single took    33.0 ms
+           dot_single_vec took     9.3 ms
+            dot_single_vc took     9.0 ms
+
+              map_poly_single_c took    29.7 ms
+          map_poly_single took    44.4 ms
+      map_poly_single_vec took    22.8 ms
+       map_poly_single_vc took    28.4 ms
+
+/lab11_time
+             dot_single_c took    37.3 ms
+               dot_single took    33.8 ms
+           dot_single_vec took    10.2 ms
+            dot_single_vc took     9.2 ms
+
+              map_poly_single_c took    30.9 ms
+          map_poly_single took    34.5 ms
+      map_poly_single_vec took    23.5 ms
+       map_poly_single_vc took    25.8 ms
+
+
